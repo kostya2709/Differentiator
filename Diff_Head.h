@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <iostream>
 #include <unistd.h>
+#include <ctype.h>
+#include <math.h>
 
 #define ACCUR "%.3lf"
 
@@ -13,14 +15,20 @@ const int FILE_SIZE = 256;
 
 const int FILE_NAME_SIZE = 32;
 
-enum node_types { NUMBER, OPERATOR};
+const int operator_size = 10;
 
-enum operator_num {
-    ADD,
-    MIN,
-    MUL,
-    DIV
-};
+enum node_types {
+                        NUMBER,
+                        OPERATOR,
+                        VAR
+                };
+
+enum operator_num   {
+                        ADD,
+                        MIN,
+                        MUL,
+                        DIV
+                    };
 
 struct Node
 {
@@ -32,7 +40,7 @@ public:
 
     elem_t data;
 
-    char sym;
+    char* sym;
 
     int node_type;
 
@@ -74,6 +82,8 @@ public:
     /*!This function reads the information about the tree from the file f*/
     int File_Read (char* file_name);
 
+    void Make_Easier (void);
+
     ~Tree();
 
 private:
@@ -92,3 +102,9 @@ char* Delete_Str_Trash (char* str);
 
 /*! Converts path from int into char* */
 char* Path_Convert (int way);
+
+elem_t Find_Sol (elem_t a, elem_t b, char* operator_t);
+
+elem_t Find_Sol (elem_t a, char* operator_t);
+
+int Calculate_Consts (Node* node1);
