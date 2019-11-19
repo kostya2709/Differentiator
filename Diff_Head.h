@@ -27,7 +27,19 @@ enum operator_num   {
                         ADD,
                         MIN,
                         MUL,
-                        DIV
+                        DIV,
+                        POW,
+                        LOG,
+                        LOG10,
+                        LN,
+                        SIN,
+                        COS,
+                        TAN,
+                        COTAN,
+                        SH,
+                        CH,
+                        TH,
+                        CTH
                     };
 
 struct Node
@@ -82,7 +94,11 @@ public:
     /*!This function reads the information about the tree from the file f*/
     int File_Read (char* file_name);
 
-    void Make_Easier (void);
+    int Make_Simple_Tree (Node* node1);
+
+    int Calculate_Consts (Node* node1);
+
+    int Find_Operator (char* oper);
 
     ~Tree();
 
@@ -96,6 +112,10 @@ private:
     /*!An auxiliary function for File_Read.*/
     void File_Read_Cycle (Node* node1);
 
+    int Kill_One (Node* node1);
+
+    int Kill_Zero (Node* node1);
+
 };
 
 char* Delete_Str_Trash (char* str);
@@ -103,8 +123,6 @@ char* Delete_Str_Trash (char* str);
 /*! Converts path from int into char* */
 char* Path_Convert (int way);
 
-elem_t Find_Sol (elem_t a, elem_t b, char* operator_t);
+elem_t Find_Sol (elem_t a, elem_t b, int operator_t);
 
-elem_t Find_Sol (elem_t a, char* operator_t);
-
-int Calculate_Consts (Node* node1);
+elem_t Find_Sol (elem_t a, int operator_t);

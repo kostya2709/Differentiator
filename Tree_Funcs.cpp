@@ -171,8 +171,3 @@ void Tree::Tree_Info_Dump (const Node* node1, FILE* f)
     }
 
 }
-
-void Tree::Make_Easier (void)
-{
-
-}

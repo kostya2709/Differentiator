@@ -33,7 +33,9 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="Diff_Head.h" />
+		<Unit filename="Expression_Develop.cpp" />
 		<Unit filename="Funcs.cpp" />
+		<Unit filename="Tree_Funcs.cpp" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

@@ -11,7 +11,9 @@ int main()
 
     calc.File_Read (file_name);
 
-    Calculate_Consts (calc.first_elem);
+    calc.Calculate_Consts (calc.first_elem);
+
+    calc.Make_Simple_Tree (calc.first_elem);
 
     calc.Dump();
 
