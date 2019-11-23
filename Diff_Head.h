@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <math.h>
 
-#define ACCUR "%.3lf"
+#define ACCUR "%.2lf"
 
 typedef double elem_t;
 
@@ -24,13 +24,14 @@ enum node_types {
                 };
 
 enum operator_num   {
+                        ZERO,
                         ADD,
                         MIN,
                         MUL,
                         DIV,
                         POW,
                         LOG,
-                        LOG10,
+                        LG,
                         LN,
                         SIN,
                         COS,
@@ -100,6 +101,10 @@ public:
 
     int Find_Operator (char* oper);
 
+    Node* Find_Derive (Node* node1);
+
+    int Tree_Simplifier (Node* node1);
+
     ~Tree();
 
 private:
@@ -126,3 +131,7 @@ char* Path_Convert (int way);
 elem_t Find_Sol (elem_t a, elem_t b, int operator_t);
 
 elem_t Find_Sol (elem_t a, int operator_t);
+
+Node* Tree_Copy (Node* prev_node);
+
+Node* Create_Node (Node* left, Node* right, Node* parent, elem_t data, char* sym, int node_type);

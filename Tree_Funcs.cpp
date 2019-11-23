@@ -1,6 +1,6 @@
 #include "Diff_Head.h"
 
-Node::Node(): left (NULL), right (NULL), data (-1), node_type (0)
+Node::Node(): left (NULL), right (NULL), parent (NULL), data (-1), node_type (0)
 {
     sym = (char*)calloc (1, operator_size);
 }
@@ -47,15 +47,9 @@ int Tree::Insert_Node (Node* node_new)
 {
     assert (node_new);
 
-    if (this->elem_num == 0)
-    {
-        this->first_elem = node_new;
-        this->elem_num = 1;
-        return 0;
-    }
-
-    printf ("Error! Your tree is not empty!\n");
-    return -1;
+    this->first_elem = node_new;
+    this->elem_num = 1;
+    return 0;
 }
 
 int Tree::Dump (void)
@@ -170,4 +164,62 @@ void Tree::Tree_Info_Dump (const Node* node1, FILE* f)
         Tree_Info_Dump (node1->right, f);
     }
 
+}
+
+Node* Create_Node (Node* left, Node* right, Node* parent, elem_t data, char* sym, int node_type)
+{
+    Node* new_node = new Node();
+
+    new_node->left = left;
+    new_node->right = right;
+    new_node->parent = parent;
+
+    if (left)
+        left->parent = new_node;
+    if (right)
+        right->parent = new_node;
+
+    new_node->data = data;
+    sprintf (new_node->sym, "%s", sym);
+    new_node->node_type = node_type;
+
+    return new_node;
+}
+
+
+int Tree_Copy_Cycle (Node* prev_node, Node* new_node);
+
+Node* Tree_Copy (Node* prev_node)
+{
+    Node* new_node = new Node();
+
+    Tree_Copy_Cycle (prev_node, new_node);
+
+    return new_node;
+
+}
+
+int Tree_Copy_Cycle (Node* prev_node, Node* new_node)
+{
+
+    new_node->data = prev_node->data;
+    sprintf (new_node->sym, "%s", prev_node->sym);
+
+    new_node->node_type = prev_node->node_type;
+
+    if (prev_node->left)
+    {
+        Node* node_l = new Node();
+        new_node->left = node_l;
+        node_l->parent = new_node;
+        Tree_Copy_Cycle (prev_node->left, node_l);
+    }
+
+    if (prev_node->right)
+    {
+        Node* node_r = new Node();
+        new_node->right = node_r;
+        node_r->parent = new_node;
+        Tree_Copy_Cycle (prev_node->right, node_r);
+    }
 }

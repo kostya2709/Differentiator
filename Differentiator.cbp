@@ -32,10 +32,13 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="DEFINES.h" />
+		<Unit filename="Derives_Funcs.cpp" />
 		<Unit filename="Diff_Head.h" />
 		<Unit filename="Expression_Develop.cpp" />
 		<Unit filename="Funcs.cpp" />
 		<Unit filename="Tree_Funcs.cpp" />
+		<Unit filename="UNDEFINES.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

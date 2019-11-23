@@ -1,5 +1,7 @@
 #include "Diff_Head.h"
 
+int DONE = 0;
+
 int Tree::Calculate_Consts (Node* node1)
 {
 
@@ -20,13 +22,14 @@ int Tree::Calculate_Consts (Node* node1)
 
     elem_t temp = 0;
     elem_t result = 0;
-    int done = 0;
+    int ddone = 0;
 
     if (node1->left && node1->right)
         if ((NODE_T == OPERATOR) && (LEFT_T == NUMBER) && (RIGHT_T == NUMBER))
         {
             result = Find_Sol (node1->left->data, node1->right->data, node1->data);
-            done = 1;
+            ddone = 1;
+            DONE = 1;
         }
 
     if (NODE_T == OPERATOR)
@@ -34,10 +37,11 @@ int Tree::Calculate_Consts (Node* node1)
                 if (RIGHT_T == NUMBER)
                 {
                     result = Find_Sol (node1->right->data, node1->data);
-                    done = 1;
+                    ddone = 1;
+                    DONE = 1;
                 }
 
-    if (done == 1)
+    if (ddone == 1)
     {
         strcat (node1->sym, "");
         node1->left = NULL;
@@ -45,13 +49,13 @@ int Tree::Calculate_Consts (Node* node1)
         node1->node_type = NUMBER;
         node1->data = result;
 
-        printf ("result = %lf\n", result);
     }
-    done = 0;
 
 #undef LEFT_T
 #undef RIGHT_T
 #undef NODE_T
+
+    return ddone;
 
 }
 
@@ -61,7 +65,11 @@ elem_t Find_Sol (elem_t a, elem_t b, int operator_t)
     switch (operator_t)
     {
         case ADD: return a + b;
-        case MIN: return a - b;
+        case MIN:
+        {
+            if (a == 0) return b * (-1);
+            return a - b;
+        }
         case MUL: return a * b;
         case DIV: return a / b;
         case POW: return pow (a, b);
@@ -87,7 +95,7 @@ elem_t Find_Sol (elem_t a, int operator_t)
         case TH: return tanh (a);
         case CTH: return cosh (a) / sinh (a);
         case LN: return log (a);
-        case LOG10: return log (a) / log (10);
+        case LG: return log (a) / log (10);
 
         default: printf ("UNDEFINED OPERATOR \"%d\"!\n", operator_t);
     }
@@ -148,6 +156,7 @@ int Tree::Kill_Zero (Node* node1)
 
     switch ((int)node1->data)
     {
+
     case MUL:
         {
             live->data = 0;
@@ -184,13 +193,22 @@ int Tree::Kill_Zero (Node* node1)
 
     }
 
-    if (node1->parent == NULL)
-        this->first_elem = live;
-    else
-        if (node1 == node1->parent->left)
-            node1->parent->left = live;
+    if (node1->data == MIN && dir == 0)
+    {
+        node1->data = MUL;
+        sprintf (node1->sym, "*");
+        node1->left = Create_Node(NULL, NULL, node1, -1, " ", NUMBER);
+        return 0;
+    }
+
+        if (node1->parent == NULL)
+            Insert_Node(live);
         else
-            node1->parent->right = live;
+            if (node1 == node1->parent->left)
+                Insert_Node(node1->parent, live, 0);
+            else
+                Insert_Node(node1->parent, live, 1);
+        DONE = 1;
 
 
     return 0;
@@ -198,5 +216,65 @@ int Tree::Kill_Zero (Node* node1)
 
 int Tree::Kill_One (Node* node1)
 {
+    Node* kill = NULL;
+    Node* live = NULL;
+    int dir = 0;
 
+    if (node1->right->data == 1)
+    {
+        kill = node1->right;
+        live = node1->left;
+        dir = 1;
+    }
+    else
+    {
+        kill = node1->left;
+        live = node1->right;
+    }
+
+    if (node1->data == POW && dir == 0)
+    {
+        live->data = 1;
+        live->node_type = NUMBER;
+    }
+
+    if (node1->data == LOG && dir == 1)
+    {
+        live->data = 0;
+        live->node_type = NUMBER;
+    }
+
+    if ((node1->data == LOG) || (node1->data == POW) || (node1->data == MUL) || ((node1->data == DIV)&&(dir == 1)))
+    {
+        if (node1->parent == NULL)
+            Insert_Node(live);
+        else
+            if (node1 == node1->parent->left)
+                Insert_Node(node1->parent, live, 0);
+            else
+                Insert_Node(node1->parent, live, 1);
+        DONE = 1;
+    }
+
+
+    return 0;
 }
+
+int Tree::Tree_Simplifier (Node* node1)
+{
+    DONE = 1;
+    int temp = 0;
+
+    while (DONE)
+    {
+        DONE = 0;
+        this->Make_Simple_Tree (node1);
+        temp = DONE;
+        this->Calculate_Consts (node1);
+        temp += DONE;
+        DONE = temp;
+    }
+
+    return 0;
+}
+

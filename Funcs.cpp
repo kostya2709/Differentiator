@@ -83,10 +83,11 @@ void Tree::File_Read_Cycle (Node* node1)
 
         if (isalpha (*cur_ptr) && (!isalpha (*(cur_ptr + 1))))
         {
-            sscanf (cur_ptr, "%c %n", node1->sym, &letter_num);
+            sscanf (cur_ptr, "%1s %n", node1->sym, &letter_num);
             node1->node_type = VAR;
+            node1->data = -2;
         }
-        if (isdigit (*cur_ptr) == 0)
+        else if (isdigit (*cur_ptr) == 0)
         {
             sscanf (cur_ptr, "%[^(, ), 0-9] %n", node1->sym, &letter_num);
             node1->node_type = OPERATOR;
@@ -155,8 +156,8 @@ int Tree::Find_Operator (char* oper)
         return CTH;
     if (EQU ("ln"))
         return LN;
-    if (EQU ("log"))
-        return LOG10;
+    if (EQU ("lg"))
+        return LG;
 
     return -1;
 #undef EQU
