@@ -152,7 +152,7 @@ int Tree::Find_Operator (char* oper)
         return CH;
     if (EQU ("th") || EQU ("tanh"))
         return TH;
-    if (EQU ("cth")||EQU ("cotanh"))
+    if (EQU ("cth")||EQU ("cotanh")||EQU("coth"))
         return CTH;
     if (EQU ("ln"))
         return LN;

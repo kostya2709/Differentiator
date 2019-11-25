@@ -267,12 +267,14 @@ int Tree::Tree_Simplifier (Node* node1)
 
     while (DONE)
     {
+    printf ("So\n");
         DONE = 0;
         this->Make_Simple_Tree (node1);
         temp = DONE;
         this->Calculate_Consts (node1);
         temp += DONE;
         DONE = temp;
+        DONE = 0;
     }
 
     return 0;

@@ -39,6 +39,7 @@
 		<Unit filename="Funcs.cpp" />
 		<Unit filename="Tree_Funcs.cpp" />
 		<Unit filename="UNDEFINES.h" />
+		<Unit filename="Write_To_PDF.cpp" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

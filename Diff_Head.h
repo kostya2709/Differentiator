@@ -7,7 +7,7 @@
 #include <ctype.h>
 #include <math.h>
 
-#define ACCUR "%.2lf"
+#define ACCUR "%lg"
 
 typedef double elem_t;
 
@@ -54,6 +54,8 @@ public:
     elem_t data;
 
     char* sym;
+
+    int priority;
 
     int node_type;
 
@@ -135,3 +137,11 @@ elem_t Find_Sol (elem_t a, int operator_t);
 Node* Tree_Copy (Node* prev_node);
 
 Node* Create_Node (Node* left, Node* right, Node* parent, elem_t data, char* sym, int node_type);
+
+int Write_From_File (char* file_name);
+
+int File_Clean ();
+
+int Write_Expr_To_PDF (Node* node1);
+
+int Compile_LaTex (void);

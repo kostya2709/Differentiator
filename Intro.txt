@@ -1,0 +1,17 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{ulem}
+\author{Драгунъ Константинъ}
+\title{Давайте производные изыматъ}
+\date{27.09.1916}
+\begin{document}
+\maketitle
+Ай-да, сударь, производную считать. Дело это, как широко известно, славное, богоугодное. Изымем производную какой-нибудь сложной функции.
+Желательно подлиннее и пострашнее. Прямо чтобы \sout{мехматов} отроков ночью пугать можно было. 
+Полагаю, эта сгодится: 

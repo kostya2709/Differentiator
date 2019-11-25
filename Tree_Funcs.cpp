@@ -1,6 +1,6 @@
 #include "Diff_Head.h"
 
-Node::Node(): left (NULL), right (NULL), parent (NULL), data (-1), node_type (0)
+Node::Node(): left (NULL), right (NULL), parent (NULL), data (-1), node_type (0), priority (0)
 {
     sym = (char*)calloc (1, operator_size);
 }
@@ -57,6 +57,7 @@ int Tree::Dump (void)
     char* file_name = (char*)calloc (1, FILE_NAME_SIZE);
     char* file_png = (char*)calloc (1, FILE_NAME_SIZE);
 
+
     file_name = "equation_print.gv";
     file_png = "equation_print_pic.png";
 
@@ -72,6 +73,7 @@ int Tree::Dump (void)
     fclose (f);
 
     system ("dot -Tpng equation_print.gv -o equation_print_pic.png");
+    system ("xdg-open equation_print_pic.png");
 
 
     file_name = "equation_dump.gv";
@@ -90,6 +92,7 @@ int Tree::Dump (void)
 
     system ("dot -Tpng equation_dump.gv -o equation_dump_pic.png");
 
+
     return 0;
 }
 
@@ -97,20 +100,32 @@ void Tree::Tree_Print (const Node* node1, FILE* f)
 {
     assert (node1);
 
+        char* color = (char*)calloc (1, 10);
+
+#define DEF_COLOR(node)             \
+if (node->node_type == OPERATOR)   \
+    sprintf (color, "yellow");      \
+else if (node->node_type == VAR)   \
+    sprintf (color, "green");       \
+
+    DEF_COLOR (node1);
+
     if (node1 == this->first_elem)
     {
         if (node1->node_type == NUMBER)
             fprintf (f, "\"box%0x\" [label=\"" ACCUR "\"];\n", node1, node1->data);
         else
-            fprintf (f, "\"box%0x\" [fillcolor=\"yellow\",label=\"" "%s" "\"];\n", node1, node1->sym);
+            fprintf (f, "\"box%0x\" [fillcolor=\"%s\",label=\"" "%s" "\"];\n", node1, color, node1->sym);
     }
 
     if (node1->left)
         {
+            DEF_COLOR (node1->left);
+
             if (node1->left->node_type == NUMBER)
                 fprintf (f, "\"box%0x\" [label=\"" ACCUR "\"];\n", node1->left, (node1->left)->data);
             else
-                fprintf (f, "\"box%0x\" [fillcolor=\"yellow\",label=\"" "%s" "\"];\n", node1->left, node1->left->sym);
+                fprintf (f, "\"box%0x\" [fillcolor=\"%s\",label=\"" "%s" "\"];\n", node1->left, color, node1->left->sym);
             fprintf (f, "\"box%0x\" -> \"box%0x\"[color=\"red\"];\n", node1, node1->left);
 
             Tree_Print (node1->left, f);
@@ -119,33 +134,52 @@ void Tree::Tree_Print (const Node* node1, FILE* f)
 
     if (node1->right)
     {
+        DEF_COLOR (node1->right);
+
         if (node1->right->node_type == NUMBER)
             fprintf (f, "\"box%0x\" [label=\"" ACCUR "\"];\n", node1->right, (node1->right)->data);
         else
-            fprintf (f, "\"box%0x\" [fillcolor=\"yellow\",label=\"" "%s" "\"];\n", node1->right, node1->right->sym);
+            fprintf (f, "\"box%0x\" [fillcolor=\"%s\",label=\"" "%s" "\"];\n", node1->right, color, node1->right->sym);
         fprintf (f, "\"box%0x\" -> \"box%0x\"[color=\"green\"];\n", node1, node1->right);
 
         Tree_Print (node1->right, f);
     }
 
+
+    #undef DEF_COLOR
+    free (color);
+
 }
 
 void Tree::Tree_Info_Dump (const Node* node1, FILE* f)
 {
+
+            char* color = (char*)calloc (1, 10);
+
+#define DEF_COLOR(node)             \
+if (node->node_type == OPERATOR)   \
+    sprintf (color, "yellow");      \
+else if (node->node_type == VAR)   \
+    sprintf (color, "green");       \
+
+    DEF_COLOR(node1);
+
     if (node1 == this->first_elem)
         if (node1->node_type == NUMBER)
             fprintf (f, "\"box%0x\" [label=\"{" ACCUR "|adress=%0x|left=%0x|right=%0x}\"];\n", node1, node1->data, node1, node1->left, node1->right);
         else
-            fprintf (f, "\"box%0x\" [label=\"{%s|adress=%0x|left=%0x|right=%0x}\"];\n", node1, node1->sym, node1, node1->left, node1->right);
+            fprintf (f, "\"box%0x\" [fillcolor = \"%s\",label=\"{%s|adress=%0x|left=%0x|right=%0x}\"];\n", node1, color, node1->sym, node1, node1->left, node1->right);
 
     if (node1->left)
         {
+            DEF_COLOR (node1->left);
+
             if (node1->left->node_type == NUMBER)
                 fprintf (f, "\"box%0x\" [label=\"{" ACCUR "|adress %0x|left=%0x|right=%0x|parent=%0x}\"];\n",
                             node1->left, (node1->left)->data, node1->left,
                 (node1->left)->left, (node1->left)->right, node1->left->parent);
-            else fprintf (f, "\"box%0x\" [label=\"{%s|adress %0x|left=%0x|right=%0x|parent=%0x}\"];\n",
-                            node1->left, (node1->left)->sym, node1->left,
+            else fprintf (f, "\"box%0x\" [fillcolor=\"%s\",label=\"{%s|adress %0x|left=%0x|right=%0x|parent=%0x}\"];\n",
+                            node1->left, color, (node1->left)->sym, node1->left,
                 (node1->left)->left, (node1->left)->right, node1->left->parent);
             fprintf (f, "\"box%0x\" -> \"box%0x\"[color=\"red\"];\n", node1, node1->left);
 
@@ -155,14 +189,20 @@ void Tree::Tree_Info_Dump (const Node* node1, FILE* f)
 
     if (node1->right)
     {
+        DEF_COLOR (node1->right);
+
         if (node1->right->node_type == NUMBER)
             fprintf (f, "\"box%0x\" [label=\"{" ACCUR "|adress=%0x|left=%0x|right=%0x|parent=%0x}\"];\n", node1->right, (node1->right)->data, node1->right, (node1->right)->left, (node1->right)->right, node1->right->parent);
         else
-            fprintf (f, "\"box%0x\" [label=\"{%s|adress=%0x|left=%0x|right=%0x|parent=%0x}\"];\n", node1->right, (node1->right)->sym, node1->right, (node1->right)->left, (node1->right)->right, node1->right->parent);
+            fprintf (f, "\"box%0x\" [fillcolor=\"%s\",label=\"{%s|adress=%0x|left=%0x|right=%0x|parent=%0x}\"];\n", node1->right, color, (node1->right)->sym, node1->right, (node1->right)->left, (node1->right)->right, node1->right->parent);
         fprintf (f, "\"box%0x\" -> \"box%0x\"[color=\"green\"];\n", node1, node1->right);
 
         Tree_Info_Dump (node1->right, f);
     }
+
+
+    #undef DEF_COLOR
+    free (color);
 
 }
 
