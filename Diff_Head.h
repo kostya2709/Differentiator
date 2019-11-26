@@ -15,7 +15,7 @@ const int FILE_SIZE = 256;
 
 const int FILE_NAME_SIZE = 32;
 
-const int operator_size = 10;
+const int operator_size = 6;
 
 enum node_types {
                         NUMBER,
@@ -55,9 +55,7 @@ public:
 
     char* sym;
 
-    int priority;
-
-    int node_type;
+    char node_type;
 
      Node();
 
@@ -101,9 +99,7 @@ public:
 
     int Calculate_Consts (Node* node1);
 
-    int Find_Operator (char* oper);
-
-    Node* Find_Derive (Node* node1);
+    Node* Find_Derive (Node* node1, const char* der_var);
 
     int Tree_Simplifier (Node* node1);
 
@@ -144,4 +140,10 @@ int File_Clean ();
 
 int Write_Expr_To_PDF (Node* node1);
 
+Node* Get_General (const char* str);
+
 int Compile_LaTex (void);
+
+int Insert_Var (Node* node1, char* var, elem_t value);
+
+int Find_Operator (char* oper);

@@ -47,10 +47,10 @@ int Tree::File_Read (char* file_name)
 
     int letter_num = 0;
 
-    Node* node0 = new Node();
-    this->Insert_Node (node0);
+    //File_Read_Cycle (this->first_elem);
+printf ("stroka %s\n", cur_ptr);
+    this->Insert_Node (Get_General (cur_ptr));
 
-    File_Read_Cycle (this->first_elem);
     fclose (f);
 
     return 0;
@@ -58,70 +58,7 @@ int Tree::File_Read (char* file_name)
 }
 
 
-
-void Tree::File_Read_Cycle (Node* node1)
-{
-    assert (node1);
-
-    if (*cur_ptr == '\0')
-        return;
-
-    int letter_num = 0;
-
-    cur_ptr += 1;                   ///Skips a brace.
-
-
-    if (*cur_ptr == '$')
-        ;
-    else if (*cur_ptr == '(')
-    {
-        Node* node_left = new Node();
-        this->Insert_Node (node1, node_left, 0);
-        File_Read_Cycle(node_left);
-        cur_ptr++;
-    }
-
-        if (isalpha (*cur_ptr) && (!isalpha (*(cur_ptr + 1))))
-        {
-            sscanf (cur_ptr, "%1s %n", node1->sym, &letter_num);
-            node1->node_type = VAR;
-            node1->data = -2;
-        }
-        else if (isdigit (*cur_ptr) == 0)
-        {
-            sscanf (cur_ptr, "%[^(, ), 0-9] %n", node1->sym, &letter_num);
-            node1->node_type = OPERATOR;
-            node1->data = Find_Operator (node1->sym);
-        }
-        else
-        {
-            sscanf (cur_ptr, "%lf %n", &node1->data, &letter_num);
-        }
-        cur_ptr += letter_num;      ///Skips the string.
-
-        if (*cur_ptr == ')')
-        {
-            return;
-        }
-
-        if (*cur_ptr == '$')
-            ;
-        else if (*cur_ptr == ')')
-            return;
-        else
-        {
-            Node* node_right = new Node();
-            this->Insert_Node (node1, node_right, 1);
-            File_Read_Cycle(node_right);
-        }
-        if (*cur_ptr == ')')
-            cur_ptr++;
-
-}
-
-
-
-int Tree::Find_Operator (char* oper)
+int Find_Operator (char* oper)
 {
 #define EQU(str) strcmp (oper, str) == 0
 
@@ -161,4 +98,19 @@ int Tree::Find_Operator (char* oper)
 
     return -1;
 #undef EQU
+}
+
+int Insert_Var (Node* node1, char* var_name, elem_t value)
+{
+    if (node1->left)
+        Insert_Var (node1->left, var_name, value);
+    if (node1->right)
+        Insert_Var (node1->right, var_name, value);
+
+    if (node1->node_type == VAR && (!strcmp(node1->sym, var_name)))
+    {
+        node1->node_type = NUMBER;
+        node1->data = value;
+    }
+    return 0;
 }

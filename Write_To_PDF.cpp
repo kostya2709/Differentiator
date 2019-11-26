@@ -40,8 +40,6 @@ int Write_Expr_To_PDF (Node* node1)
 
     sprintf (ptr, "$$\n");
 
-    printf ("stroka = \n%s\n", expression);
-
     FILE* f = fopen (Pdf_file, "a");
     fwrite (expression, strlen (expression), 1, f);
     fclose (f);
@@ -61,16 +59,16 @@ int Write_Expr_Cycle (Node* node1, char** ptr)
             pos += let_num;
         }
 
+    Check_Bracket (node1, &pos, '(');
+
     if (node1->left)
         Write_Expr_Cycle (node1->left, &pos);
-
-    Check_Bracket (node1, &pos, '(');
 
     switch (node1->node_type)
     {
         case NUMBER:
         {
-            if (node1->data > 0)
+            if (node1->data >= 0)
                 let_num = sprintf (pos, "%lg", node1->data);
             else
                 let_num = sprintf (pos, "(%lg)", node1->data);
@@ -98,7 +96,7 @@ int Write_Expr_Cycle (Node* node1, char** ptr)
                 }
                 case MUL:
                 {
-                    let_num = sprintf (pos, "\\cdot");
+                    let_num = sprintf (pos, "\\cdot ");
                     pos += let_num;
                     break;
                 }
@@ -113,6 +111,12 @@ int Write_Expr_Cycle (Node* node1, char** ptr)
                 case DIV:
                 {
                     let_num = sprintf (pos, "}{");
+                    pos += let_num;
+                    break;
+                }
+                case POW:
+                {
+                    let_num = sprintf (pos, "^{");
                     pos += let_num;
                     break;
                 }
@@ -132,10 +136,8 @@ int Write_Expr_Cycle (Node* node1, char** ptr)
         }
     }
 
-    Check_Bracket (node1, &pos, ')');
-
     if (node1->parent)
-        if (node1 == node1->parent->right && Check_Priority (node1->parent)== 2)
+        if (node1 == node1->parent->right && (Check_Priority (node1->parent)== 2 || Check_Priority(node1->parent)==3))
         {
             sprintf (pos, "}");
             pos++;
@@ -149,6 +151,9 @@ int Write_Expr_Cycle (Node* node1, char** ptr)
             sprintf (pos, "}");
             pos++;
         }
+
+
+    Check_Bracket (node1, &pos, ')');
 
     *ptr = pos;
 
@@ -170,6 +175,9 @@ int Compile_LaTex (void)
     sprintf (call, "xdg-open ");
     strcat (call, Pdf_file1);
     system (call);
+
+    system ("clear");
+
     return 0;
 }
 
@@ -195,7 +203,9 @@ int Check_Priority (Node* node1)
     int oper = node1->data;
     if (oper <= 2)
         return 0;
-    if (oper == 3 || oper == 4)
+    if (oper == MUL || oper == DIV)
         return 1;
+    if (oper == POW)
+        return 3;
     return 2;
 }

@@ -1,4 +1,6 @@
 
+#define Find_Derive(node) Find_Derive(node, der_var)
+
 #define dL Find_Derive(cL)
 #define dR Find_Derive(cR)
 

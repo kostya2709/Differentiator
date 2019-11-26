@@ -1,6 +1,6 @@
 #include "Diff_Head.h"
 
-Node::Node(): left (NULL), right (NULL), parent (NULL), data (-1), node_type (0), priority (0)
+Node::Node(): left (NULL), right (NULL), parent (NULL), data (-1), node_type (0)
 {
     sym = (char*)calloc (1, operator_size);
 }

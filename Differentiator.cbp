@@ -37,6 +37,7 @@
 		<Unit filename="Diff_Head.h" />
 		<Unit filename="Expression_Develop.cpp" />
 		<Unit filename="Funcs.cpp" />
+		<Unit filename="Recursive descent.cpp" />
 		<Unit filename="Tree_Funcs.cpp" />
 		<Unit filename="UNDEFINES.h" />
 		<Unit filename="Write_To_PDF.cpp" />

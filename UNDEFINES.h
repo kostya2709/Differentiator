@@ -1,3 +1,5 @@
+#undef Find_Derive
+
 #undef cL
 #undef cR
 #undef dL
