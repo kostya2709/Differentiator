@@ -1,6 +1,6 @@
 #include "Diff_Head.h"
 
-Node* Tree::Find_Derive (Node* node1)
+Node* Tree::Find_Derive (Node* node1, const char* der_var)
 {
 
 #include "DEFINES.h"
@@ -65,7 +65,7 @@ Node* answer = NULL;
                     }
                     case (COS):
                     {
-                        answer = dMUL ( dMUL ( dSIN, CONST (-1)), cR);
+                        answer = dMUL ( dMUL (CONST (-1), dSIN), cR);
                         break;
                     }
                     case (TAN):
@@ -118,8 +118,11 @@ Node* answer = NULL;
 
             case VAR:
             {
+                if (!strcmp(node1->sym, der_var))
+                        N_DATA = 1;
+                else
+                    N_DATA = 0;
                 node1->node_type = NUMBER;
-                N_DATA = 1;
                 break;
             }
 

@@ -1,1 +1,1 @@
-((x)*(ln(x)))
+x^(x^x)+ sin (cos(tg(x^3)))

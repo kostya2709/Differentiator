@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <math.h>
+#include <stdarg.h>
 
 #define ACCUR "%lg"
 
@@ -147,3 +148,5 @@ int Compile_LaTex (void);
 int Insert_Var (Node* node1, char* var, elem_t value);
 
 int Find_Operator (char* oper);
+
+void Read_Aloud (char* str, ...);

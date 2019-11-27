@@ -10,6 +10,8 @@ Node* Get_Expr (void);
 
 Node* Get_Top (void);
 
+Node* Get_Pow (void);
+
 Node* Get_Pbrack (void);
 
 Node* Func (char* oper);
@@ -36,10 +38,8 @@ Node* Get_Number (void)
     char* sym = (char*)calloc (1, operator_size);
 
     sscanf (str_ptr, "%lf %n", &val, &let_num);
-    printf ("num = %lf\n", val);
 
     str_ptr += let_num;
-    printf ("next = %c\n", *str_ptr);
 
     if (let_num == 0)
     {
@@ -58,7 +58,6 @@ Node* Get_Expr (void)
     {
         char op = *str_ptr;
         str_ptr++;
-        printf ("oper = %c\n", *str_ptr);
         Node* res2 = Get_Top();
 
         if (op == '+')
@@ -71,13 +70,12 @@ Node* Get_Expr (void)
 
 Node* Get_Top (void)
 {
-    Node* val = Get_Pbrack ();
+    Node* val = Get_Pow ();
     while ((*str_ptr == '*') || (*str_ptr == '/'))
     {
         char op = *str_ptr;
         str_ptr++;
-        printf ("oper = %c\n", op);
-        Node* val2 = Get_Pbrack();
+        Node* val2 = Get_Pow();
 
         if (op == '*')
             val = Create_Node (val, val2, NULL, MUL, "*", OPERATOR);
@@ -96,7 +94,7 @@ Node* Get_Pbrack (void)
         str_ptr++;
         Node* val = Get_Expr();
         if (*str_ptr == ')')
-            printf ("OK\n");
+            ;
         else
         {
             printf ("Expected ')'!\n");
@@ -142,4 +140,18 @@ Node* Get_Str (void)
                 return Func(oper);
     else return Create_Node (NULL, NULL, NULL, -2, oper, VAR);
 
+}
+
+Node* Get_Pow (void)
+{
+    Node* val = Get_Pbrack ();
+    while (*str_ptr == '^')
+    {
+        str_ptr++;
+        Node* val2 = Get_Pbrack();
+
+        val = Create_Node (val, val2, NULL, POW, "^", OPERATOR);
+    }
+assert (val);
+    return val;
 }

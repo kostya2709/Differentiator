@@ -4,6 +4,7 @@
 
 int main()
 {
+    //Read_Aloud ("Здорово, люди!");
 
     char* file_name = "problem.txt";
     File_Clean();
@@ -25,8 +26,8 @@ int main()
     calc1.Calculate_Consts (calc1.first_elem);
 
     calc1.Find_Derive (calc1.first_elem, "x");
-    calc1.Calculate_Consts (calc1.first_elem);
     calc1.Make_Simple_Tree (calc1.first_elem);
+    calc1.Calculate_Consts (calc1.first_elem);
     //calc1.Tree_Simplifier (calc1.first_elem);
     calc1.Dump();
     Write_Expr_To_PDF (calc1.first_elem);
@@ -35,6 +36,6 @@ int main()
     Write_From_File ("Ending.txt");
 
     Compile_LaTex ();
-//(((x) * (2))^(2))
+
     return 0;
 }
