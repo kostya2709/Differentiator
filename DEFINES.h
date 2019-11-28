@@ -51,3 +51,9 @@ Create_Node(node_l, node_r, NULL, POW, "^", OPERATOR)
 
 #define R_DATA node1->right->data
 #define N_DATA node1->data
+
+#define PUT_STR(str) Write_Str_To_PDF (str);
+#define DER(node2) Write_Expr_To_PDF(node2, 1);
+#define PUT(node2) Write_Expr_To_PDF(node2, 0);
+#define PUT_L Write_Expr_To_PDF(node1->left, 0);
+#define PUT_R Write_Expr_To_PDF(node1->right, 0);

@@ -23,22 +23,38 @@ int Write_From_File (char* file_name)
 
 int Write_Expr_Cycle (Node* node1, char** pos);
 
-int Check_Bracket (Node* node1, char** pos, char bracket);
+int Check_Bracket (Node* node1, char** pos, int bracket);
 
 int Check_Priority (Node* node1);
 
-int Write_Expr_To_PDF (Node* node1)
+int Write_Str_To_PDF (char* string)
 {
-    char* expression = (char*)calloc (1, FILE_SIZE);
+    FILE* f = fopen (Pdf_file, "a");
+    fwrite (string, strlen (string), 1, f);
+    fclose (f);
+}
+
+int Write_Expr_To_PDF (Node* node1, int bracket)
+{
+    char* expression = (char*)calloc (1, F_SIZE);
     char* ptr = expression;
     int let_num = 0;
 
-    sprintf (ptr, "\n$$");
-    ptr += 3;
+    if (bracket)
+    {
+        let_num = sprintf (ptr, " \\left ( ");
+        ptr += let_num;
+    }
 
     Write_Expr_Cycle (node1, &ptr);
 
-    sprintf (ptr, "$$\n");
+    if (bracket)
+    {
+        let_num = sprintf (ptr, " \\right)'");
+        ptr += let_num;
+    }
+
+
 
     FILE* f = fopen (Pdf_file, "a");
     fwrite (expression, strlen (expression), 1, f);
@@ -47,22 +63,29 @@ int Write_Expr_To_PDF (Node* node1)
     free (expression);
 }
 
+int Write_Str (char* str_main, char* str_in, char** pos);
+
 int Write_Expr_Cycle (Node* node1, char** ptr)
 {
+
+#define Write_Str(str_in) Write_Str (pos, str_in, &pos);
+
     char* pos = *ptr;
     int let_num = 0;
-    printf ("%lf %d\n", node1->data, node1->node_type);
 
-    if (node1->data == DIV)
-        {
-            let_num = sprintf (pos, "\\frac{");
-            pos += let_num;
-        }
+    if (node1->data == DIV && node1->node_type == OPERATOR)
+        Write_Str ("\\cfrac{");
 
-    Check_Bracket (node1, &pos, '(');
+    if (node1->data == POW && node1->node_type == OPERATOR)
+        Write_Str ("{");
+
+    if (node1->parent)
+        if (node1->node_type == OPERATOR && Check_Priority(node1->parent) > Check_Priority(node1))
+            Write_Str ("\\left(");
 
     if (node1->left)
         Write_Expr_Cycle (node1->left, &pos);
+
 
     switch (node1->node_type)
     {
@@ -78,8 +101,7 @@ int Write_Expr_Cycle (Node* node1, char** ptr)
 
         case VAR:
         {
-            let_num = sprintf (pos, "%s", node1->sym);
-            pos += let_num;
+            Write_Str (node1->sym);
             break;
         }
 
@@ -90,14 +112,12 @@ int Write_Expr_Cycle (Node* node1, char** ptr)
                 case MIN:
                 case ADD:
                 {
-                    let_num = sprintf (pos, "%s", node1->sym);
-                    pos += let_num;
+                    Write_Str (node1->sym);
                     break;
                 }
                 case MUL:
                 {
-                    let_num = sprintf (pos, "\\cdot ");
-                    pos += let_num;
+                    Write_Str (" \\cdot ");
                     break;
                 }
                 case SIN: case COS: case TAN:case COTAN:
@@ -110,14 +130,12 @@ int Write_Expr_Cycle (Node* node1, char** ptr)
                 }
                 case DIV:
                 {
-                    let_num = sprintf (pos, "}{");
-                    pos += let_num;
+                    Write_Str ("}");
                     break;
                 }
                 case POW:
                 {
-                    let_num = sprintf (pos, "^{");
-                    pos += let_num;
+                    Write_Str ("}^");
                     break;
                 }
 
@@ -136,27 +154,35 @@ int Write_Expr_Cycle (Node* node1, char** ptr)
         }
     }
 
-    if (node1->parent)
-        if (node1 == node1->parent->right && (Check_Priority (node1->parent)== 2 || Check_Priority(node1->parent)==3))
-        {
-            sprintf (pos, "}");
-            pos++;
-        }
-
     if (node1->right)
+    {
+        if (node1->node_type == OPERATOR && (node1->data == DIV || node1->data == POW))
+            Write_Str ("{");
+
         Write_Expr_Cycle (node1->right, &pos);
-    if (node1->parent)
-        if (node1 == node1->parent->right && node1->parent->data == DIV)
-        {
-            sprintf (pos, "}");
-            pos++;
-        }
+    }
 
+    Check_Bracket (node1, &pos, 1);
 
-    Check_Bracket (node1, &pos, ')');
+    if (node1->node_type == OPERATOR && ((node1->data == DIV)||(node1->data == POW)))
+        Write_Str("}");
+
+    if (Check_Priority (node1) == 2)
+        Write_Str ("}");
+
 
     *ptr = pos;
 
+#undef Write_Str
+}
+
+int Write_Str (char* str_main, char* str_in, char** pos)
+{
+    int let_num = 0;
+    let_num = sprintf (str_main, "%s", str_in);
+    *pos += let_num;
+
+    return let_num;
 }
 
 int File_Clean ()
@@ -181,25 +207,26 @@ int Compile_LaTex (void)
     return 0;
 }
 
-int Check_Bracket (Node* node1, char** pos, char bracket)
+int Check_Bracket (Node* node1, char** pos, int bracket)
 {
+    int let_num = 0;
 
-    if (node1->parent)
-        if (node1->parent->parent)
-            if (Check_Priority (node1->parent) < Check_Priority (node1->parent->parent))
+    if ((node1->parent)&&(node1->node_type == OPERATOR))
+            if (Check_Priority (node1) < Check_Priority (node1->parent))
             {
-                if (node1 == node1->parent->left && bracket == '(' ||
-                    node1 == node1->parent->right && bracket == ')')
-                    {
-                        sprintf (*pos, "%c", bracket);
-                        (*pos)++;
-                    }
+                        if (bracket == 0)
+                            let_num = sprintf (*pos, " \\left (");
+                        else if (bracket == 1)
+                            let_num = sprintf (*pos, " \\right )");
+                        (*pos) += let_num;
             }
     return 0;
 }
 
 int Check_Priority (Node* node1)
 {
+    if (node1->node_type != OPERATOR)
+        return -1;
     int oper = node1->data;
     if (oper <= 2)
         return 0;

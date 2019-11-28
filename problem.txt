@@ -1,1 +1,1 @@
-x^(x^x)+ sin (cos(tg(x^3)))
+sin(x^2-3*x+5)

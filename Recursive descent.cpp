@@ -62,7 +62,7 @@ Node* Get_Expr (void)
 
         if (op == '+')
             res3 = Create_Node(res3, res2, NULL, ADD, "+", OPERATOR);
-        else res3 = Create_Node(res3, res2, NULL, ADD, "-", OPERATOR);
+        else res3 = Create_Node(res3, res2, NULL, MIN, "-", OPERATOR);
     }
 
     return res3;

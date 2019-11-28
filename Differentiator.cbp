@@ -42,6 +42,7 @@
 		<Unit filename="UNDEFINES.h" />
 		<Unit filename="Write_To_PDF.cpp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="menu.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -114,3 +114,8 @@ int Insert_Var (Node* node1, char* var_name, elem_t value)
     }
     return 0;
 }
+
+int Random (int min, int max)
+{
+    return (min + rand() % (max - min + 1));
+}

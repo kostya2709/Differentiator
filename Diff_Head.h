@@ -10,6 +10,9 @@
 
 #define ACCUR "%lg"
 
+#define ENDL Write_Str_To_PDF("\n\\end{math}\n\\end{center}\n");
+#define STARTL Write_Str_To_PDF("\n\\begin{center}\n\\begin{math}\n");
+
 typedef double elem_t;
 
 const int FILE_SIZE = 256;
@@ -139,7 +142,7 @@ int Write_From_File (char* file_name);
 
 int File_Clean ();
 
-int Write_Expr_To_PDF (Node* node1);
+int Write_Expr_To_PDF (Node* node1, int bracket);
 
 Node* Get_General (const char* str);
 
@@ -150,3 +153,7 @@ int Insert_Var (Node* node1, char* var, elem_t value);
 int Find_Operator (char* oper);
 
 void Read_Aloud (char* str, ...);
+
+int Random (int min, int max);
+
+int Write_Str_To_PDF (char* string);
